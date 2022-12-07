@@ -12,7 +12,6 @@ try {
   console.log('Error:', e.stack);
 }
 
-const allFiles = []
 let min = Infinity
 
 class Node {
@@ -21,10 +20,6 @@ class Node {
   constructor(name, parent) {
     this.name = name
     this.parent = parent
-  }
-
-  getType() {
-    return this.type
   }
 
   getParent() {
@@ -52,8 +47,7 @@ class Directory extends Node {
     if (this.size) {
       return this.size
     }
-    this.size = this.content.reduce((acc, thing) => acc + thing.getSize(), 0)
-    // console.log(this.size);
+    this.size = this.content.reduce((acc, currentNode) => acc + currentNode.getSize(), 0)
     if (this.size >= 3837783 && this.size < min) {
       min = this.size
     }
@@ -69,7 +63,6 @@ class File extends Node {
   }
 
   getSize() {
-    allFiles.push(this.size)
     return this.size
   }
 }
@@ -95,10 +88,8 @@ const parseInput = () => {
       currentDir.add(new File(data[i][1], currentDir, parseInt(data[i][0])))
     }
   }
-  tree.getSize()
   return tree.getSize()
 }
 
-// console.log(parseInput())
 console.log(30000000 - (70000000 - parseInput()));
 console.log(min)
