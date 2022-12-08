@@ -15,7 +15,6 @@ try {
 let min = Infinity
 
 class Node {
-  type
   size
   constructor(name, parent) {
     this.name = name
@@ -28,7 +27,6 @@ class Node {
 }
 
 class Directory extends Node {
-  type = "dir"
   content = []
   constructor(name, parent) {
     super(name, parent);
@@ -56,7 +54,6 @@ class Directory extends Node {
 }
 
 class File extends Node {
-  type = "file"
   constructor(name, parent, size) {
     super(name);
     this.size = size
