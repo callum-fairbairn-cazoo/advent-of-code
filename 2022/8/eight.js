@@ -64,8 +64,7 @@ const directionTests = [
 ]
 
 const scenicScore = (i, j) => directionTests.reduce((acc, test) => {
-  let counter = 0
-  return acc * test(i, j, counter);
+  return acc * test(i, j);
 }, 1)
 
 const part2 = () => {
