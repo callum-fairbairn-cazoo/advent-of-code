@@ -13,13 +13,33 @@ try {
 }
 
 const hPosMap = {
-  "L": ({x, y}) => ({x: x - 1, y}),
   "R": ({x, y}) => ({x: x + 1, y}),
-  "U": ({x, y}) => ({x: x, y: y + 1}),
   "D": ({x, y}) => ({x: x, y: y - 1}),
+  "L": ({x, y}) => ({x: x - 1, y}),
+  "U": ({x, y}) => ({x: x, y: y + 1}),
 }
 
 const tPosMap = {
+  "E": (hPos, tPos) => {
+    if (hPos.y > tPos.y) return tPosMap["ENE"](tPos)
+    if (hPos.y < tPos.y) return tPosMap["ESE"](tPos)
+    return { x: tPos.x + 1, y: tPos.y }
+  },
+  "S": (hPos, tPos) => {
+    if (hPos.y > tPos.y) return tPosMap["SES"](tPos)
+    if (hPos.y < tPos.y) return tPosMap["SWS"](tPos)
+    return { x: tPos.x - 1, y: tPos.y }
+  },
+  "W": (hPos, tPos) => {
+    if (hPos.x > tPos.x) return tPosMap["WSW"](tPos)
+    if (hPos.x < tPos.x) return tPosMap["WNW"](tPos)
+    return { x: tPos.x, y: tPos.y + 1 }
+  },
+  "N": (hPos, tPos) => {
+    if (hPos.x > tPos.x) return tPosMap["NWN"](tPos)
+    if (hPos.x < tPos.x) return tPosMap["NEN"](tPos)
+    return { x: tPos.x, y: tPos.y - 1 }
+  },
   "ENE": ({x, y}) => ({ x: x + 1, y: y + 1 }),
   "ESE": ({x, y}) => ({ x: x + 1, y: y - 1 }),
   "SES": ({x, y}) => ({ x: x - 1, y: y + 1 }),
@@ -30,43 +50,11 @@ const tPosMap = {
   "NEN": ({x, y}) => ({ x: x - 1, y: y - 1 }),
 }
 
-const getNewTPos = (tPos, newHPos) => {
-  if (newHPos.x - tPos.x >= 2) {
-    if (newHPos.y > tPos.y) {
-      return tPosMap["ENE"](tPos)
-    }
-    if (newHPos.y < tPos.y) {
-      return tPosMap["ESE"](tPos)
-    }
-    return { x: tPos.x + 1, y: tPos.y }
-  }
-  if (newHPos.x - tPos.x <= -2) {
-    if (newHPos.y > tPos.y) {
-      return tPosMap["SES"](tPos)
-    }
-    if (newHPos.y < tPos.y) {
-      return tPosMap["SWS"](tPos)
-    }
-    return { x: tPos.x - 1, y: tPos.y }
-  }
-  if (newHPos.y - tPos.y >= 2) {
-    if (newHPos.x > tPos.x) {
-      return tPosMap["WSW"](tPos)
-    }
-    if (newHPos.x < tPos.x) {
-      return tPosMap["WNW"](tPos)
-    }
-    return { x: tPos.x, y: tPos.y + 1 }
-  }
-  if (newHPos.y - tPos.y <= -2) {
-    if (newHPos.x > tPos.x) {
-      return tPosMap["NWN"](tPos)
-    }
-    if (newHPos.x < tPos.x) {
-      return tPosMap["NEN"](tPos)
-    }
-    return { x: tPos.x, y: tPos.y - 1 }
-  }
+const getNewTPos = (newHPos, tPos) => {
+  if (newHPos.x - tPos.x >= 2) return tPosMap["E"](newHPos, tPos)
+  if (newHPos.x - tPos.x <= -2) return tPosMap["S"](newHPos, tPos)
+  if (newHPos.y - tPos.y >= 2) return tPosMap["W"](newHPos, tPos)
+  if (newHPos.y - tPos.y <= -2) return tPosMap["N"](newHPos, tPos)
   return tPos
 }
 
@@ -75,7 +63,7 @@ const getNewPositions = ((positions, [dir, mag], set) => {
   for (let n = 0; n < parseInt(mag); n++) {
     for (let i  = 0; i < positions.length - 1; i++) {
       const newHPos = i === 0 ? hPosMap[dir](newPositions[i]) : newPositions[i]
-      const newTPos = getNewTPos(newPositions[i + 1], newHPos)
+      const newTPos = getNewTPos(newHPos, newPositions[i + 1])
       newPositions[i] = newHPos
       newPositions[i + 1] = newTPos
       if (i === newPositions.length - 2) {
