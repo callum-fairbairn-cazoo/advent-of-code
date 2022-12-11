@@ -1,6 +1,6 @@
 import * as fs from "fs"
 
-const mapFn = (line) => line.split(" ")
+const mapFn = (line) => line
 
 const filterFn = (line) => line !== ""
 
