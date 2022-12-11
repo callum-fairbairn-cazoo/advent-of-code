@@ -1,19 +1,12 @@
-import * as fs from "fs"
+import { rawTest } from "./rawTest"
+import { rawInput } from "./rawInput"
 
 const mapFn = (line) => line
-
 const filterFn = (line) => line !== ""
 
-let data: { test: any[], input: any[] };
-try {
-  const raw_test_data = fs.readFileSync('test.txt', 'utf8');
-  const raw_input_data = fs.readFileSync('input.txt', 'utf8');
-  data.test = raw_test_data.split("\n").filter(filterFn).map(mapFn)
-  data.input = raw_input_data.split("\n").filter(filterFn).map(mapFn)
-} catch (e) {
-  console.log('Error:', e.stack);
-}
+const testData = rawTest.split("\n").filter(filterFn).map(mapFn)
+const inputData = rawInput.split("\n").filter(filterFn).map(mapFn)
 
-export const part1 = () => {}
+export const part1 = () => testData
 
-export const part2 = () => {}
+export const part2 = () => inputData
