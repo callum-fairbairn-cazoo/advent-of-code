@@ -5,7 +5,7 @@ describe('execute', () => {
     console.log(part1());
   });
 
-  it('part2', () => {
+  xit('part2', () => {
     console.log(part2());
   });
 });
