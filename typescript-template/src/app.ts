@@ -13,3 +13,7 @@ try {
 } catch (e) {
   console.log('Error:', e.stack);
 }
+
+export const part1 = () => {}
+
+export const part2 = () => {}
