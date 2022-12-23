@@ -37,7 +37,6 @@ class Directory extends Node {
   }
 
   get(name) {
-    // if (this.name === name) return this
     return this.content.find(thing => thing.name === name)
   }
 
