@@ -1,12 +1,11 @@
-import { rawTest } from "./rawTest"
-import { rawInput } from "./rawInput"
+export const mapFn = (line) => line
+export const filterFn = (line) => line !== ""
 
-const mapFn = (line) => line
-const filterFn = (line) => line !== ""
 
-const testData = rawTest.split("\n").filter(filterFn).map(mapFn)
-const inputData = rawInput.split("\n").filter(filterFn).map(mapFn)
+export const part1 = (testData, inputData) => {
+  console.log(testData);
+}
 
-export const part1 = () => testData
-
-export const part2 = () => inputData
+export const part2 = (testData, inputData) => {
+  console.log(testData);
+}
