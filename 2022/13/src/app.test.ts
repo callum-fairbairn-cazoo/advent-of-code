@@ -34,10 +34,10 @@ describe("compare", () => {
       expect(compare(left, right)).toEqual(false)
     })
 
-    it("returns false if left numbers are larger", () => {
+    it("returns false if left numbers are larger 2", () => {
       const left = [[2,3,4]]
       const right = [[4]]
-      expect(compare(left, right)).toEqual(false)
+      expect(compare(left, right)).toEqual(true)
     })
   })
 
@@ -51,7 +51,7 @@ describe("compare", () => {
     it("returns false when the right int becomes a list", () => {
       const left = [[2,3,4]]
       const right = [4]
-      expect(compare(left, right)).toEqual(false)
+      expect(compare(left, right)).toEqual(true)
     })
   })
 
@@ -107,6 +107,12 @@ describe("compare", () => {
     const left = [3]
     const right = []
     expect(compare(left, right)).toEqual(false)
+  })
+
+  it("test case 10", () => {
+    const left = [[2,[5],7,5,7],[1,[0,7,[3,7]],[0,10]],[10],[]]
+    const right = [[9]]
+    expect(compare(left, right)).toEqual(true)
   })
 })
 

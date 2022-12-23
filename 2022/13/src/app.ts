@@ -16,16 +16,19 @@ type RecursiveArray = Array<RecursiveArray | number>
 export const compare = (left: RecursiveArray, right: RecursiveArray) => {
   for (let i = 0; i < Math.max(left.length, right.length); i++) {
     const leftItem = left[i], rightItem = right[i]
-    if (leftItem === undefined) return true
-    if (rightItem === undefined) return false
     if (typeof leftItem === "object" && typeof rightItem === "object") {
-      return compare(leftItem, rightItem)
+      if (compare(leftItem, rightItem) === false) return false
     } else if (typeof leftItem === "object") {
-      return compare(leftItem, [rightItem])
+      if (compare(leftItem, [rightItem]) === false) return false
+      // if (rightItem === undefined) return false
     } else if (typeof rightItem === "object") {
-      return compare([leftItem], rightItem)
+      if (compare([leftItem], rightItem) === false) return false
+      // if (leftItem === undefined) return true
     }
-    else if (leftItem > rightItem) return false;
+    else if (leftItem > rightItem) return false
+    else if (i !== Math.max(left.length, right.length) - 1 && right[i + 1] === undefined) return true
+    else if (i !== Math.max(left.length, right.length) - 1 && left[i + 1] === undefined) return false
+    // else if (right[i + 1] === undefined) return true
   }
   return true;
 }
