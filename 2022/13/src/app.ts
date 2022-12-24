@@ -17,8 +17,42 @@ const naiveCompare = (left: RecursiveArray, right: RecursiveArray): boolean | un
   let status
   for (let i = 0; i < Math.max(left.length, right.length); i++) {
     const leftItem = left[i], rightItem = right[i]
-    if (leftItem > rightItem) return false
-    if (leftItem < rightItem) {
+    if (leftItem === undefined || rightItem === undefined) {
+      if (rightItem === undefined && status === undefined) return false
+      return status || true
+    }
+    if (typeof leftItem === "object" && typeof rightItem === "object") {
+      if (leftItem.length === 0 && rightItem.length > 0) return true
+      const compareResult = naiveCompare(leftItem, rightItem)
+      if (compareResult === false) return false
+      if (compareResult === undefined) {
+        if (leftItem.length < rightItem.length) return false
+      } else {
+        status = compareResult
+      }
+    }
+    else if (typeof leftItem === "object") {
+      const compareResult = naiveCompare(leftItem, [rightItem])
+      if (compareResult === false) return false
+      if (compareResult === undefined) {
+        if (leftItem.length < 1) return false;
+      } else {
+        status = compareResult
+      }
+    }
+    else if (typeof rightItem === "object") {
+      const compareResult = naiveCompare([leftItem], rightItem)
+      if (compareResult === false) return false
+      if (compareResult === undefined) {
+        if (1 < rightItem.length) {
+          return false
+        }
+      } else {
+        status = compareResult
+      }
+    }
+    else if (leftItem > rightItem) return false
+    else if (leftItem < rightItem) {
       status = true
     }
   }
@@ -26,37 +60,45 @@ const naiveCompare = (left: RecursiveArray, right: RecursiveArray): boolean | un
 }
 
 export const compare = (left: RecursiveArray, right: RecursiveArray) => {
-    for (let i = 0; i < Math.max(left.length, right.length); i++) {
-      const leftItem = left[i], rightItem = right[i]
-      if (typeof leftItem === "object" && typeof rightItem === "object") {
-        const onlyContainsInts = leftItem.every(item => typeof item === "number")
-          && rightItem.every(item => typeof item === "number")
-        const compareResult = onlyContainsInts ? naiveCompare(leftItem, rightItem) : compare(leftItem, rightItem)
-        if (compareResult === false) return false
-        if (compareResult === undefined) {
-          if (leftItem.length < rightItem.length) return false
-        }
-      }
-      else if (typeof leftItem === "object") {
-        const onlyContainsInts = leftItem.every(item => typeof item === "number")
-        const compareResult = onlyContainsInts ? naiveCompare(leftItem, [rightItem]) : compare(leftItem, [rightItem])
-        if (compareResult === false) return false
-        if (compareResult === undefined) {
-          if (leftItem.length < 1) return false;
-        }
-      }
-      else if (typeof rightItem === "object") {
-        const onlyContainsInts = rightItem.every(item => typeof item === "number")
-        const compareResult = onlyContainsInts ? naiveCompare([leftItem], rightItem) : compare([leftItem], rightItem)
-        if (compareResult === false) return false
-        if (compareResult === undefined) {
-          if (1 < rightItem.length) {
-            return false
-          }
-        }
-      }
-      else if (leftItem > rightItem) return false
+  let status
+  for (let i = 0; i < Math.max(left.length, right.length); i++) {
+    const leftItem = left[i], rightItem = right[i]
+    if (leftItem === undefined || rightItem === undefined) {
+      if (rightItem === undefined && status === undefined) return false
+      return status || true
     }
+    if (typeof leftItem === "object" && typeof rightItem === "object") {
+      const compareResult = naiveCompare(leftItem, rightItem)
+      if (compareResult === false) return false
+      if (compareResult === undefined) {
+        if (leftItem.length > rightItem.length) return false
+      } else {
+        status = compareResult
+      }
+    }
+    else if (typeof leftItem === "object") {
+      const compareResult = naiveCompare(leftItem, [rightItem])
+      if (compareResult === false) return false
+      if (compareResult === undefined) {
+        if (leftItem.length < 1) return false;
+      } else {
+        status = compareResult
+      }
+    }
+    else if (typeof rightItem === "object") {
+      const compareResult = naiveCompare([leftItem], rightItem)
+      if (compareResult === false) return false
+      if (compareResult === undefined) {
+        if (1 < rightItem.length) {
+          return false
+        }
+      } else {
+        status = compareResult
+      }
+    }
+    else if (leftItem > rightItem) return false
+    else if (leftItem < rightItem) status = true
+  }
     return true
 }
 

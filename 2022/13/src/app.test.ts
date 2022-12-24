@@ -57,7 +57,7 @@ describe("compare", () => {
 
   it("test case 1", () => {
     const left = [1,1,3,1,1]
-    const right = [1,1,3,1,1]
+    const right = [1,1,5,1,1]
     expect(compare(left, right)).toEqual(true)
   })
 
@@ -112,6 +112,31 @@ describe("compare", () => {
   it("test case 10", () => {
     const left = [[2,[5],7,5,7],[1,[0,7,[3,7]],[0,10]],[10],[]]
     const right = [[9]]
+    expect(compare(left, right)).toEqual(true)
+  })
+
+  it("test case 11", () => {
+    const left = [7,7,7,7]
+    const right = [7,7,7]
+    expect(compare(left, right)).toEqual(false)
+  })
+
+  it("test case 12", () => {
+    const left = [[3]]
+    const right = [[[[9],[6,6]]],[4],[[7]]]
+    expect(compare(left, right)).toEqual(true)
+  })
+
+  it("test case 13", () => {
+    const left = [[2,[],8,[9,[10,5],[9],1]],[5]]
+    const right = [[9,[[0,1],4,8,[6,5]],9,6]]
+    expect(compare(left, right)).toEqual(true)
+  })
+
+  it("test case 14", () => {
+    const left = [[[]]]
+    const right = [[1]]
+    // [[[]]] x [[1]] -> [[]] x [1] -> [] x 1
     expect(compare(left, right)).toEqual(true)
   })
 })
