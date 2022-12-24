@@ -13,24 +13,51 @@ const inputData = rawInput.split("\n\n").filter(filterFn).map(mapFn)
 
 type RecursiveArray = Array<RecursiveArray | number>
 
-export const compare = (left: RecursiveArray, right: RecursiveArray) => {
+const naiveCompare = (left: RecursiveArray, right: RecursiveArray): boolean | undefined => {
+  let status
   for (let i = 0; i < Math.max(left.length, right.length); i++) {
     const leftItem = left[i], rightItem = right[i]
-    if (typeof leftItem === "object" && typeof rightItem === "object") {
-      if (compare(leftItem, rightItem) === false) return false
-    } else if (typeof leftItem === "object") {
-      if (compare(leftItem, [rightItem]) === false) return false
-      // if (rightItem === undefined) return false
-    } else if (typeof rightItem === "object") {
-      if (compare([leftItem], rightItem) === false) return false
-      // if (leftItem === undefined) return true
+    if (leftItem > rightItem) return false
+    if (leftItem < rightItem) {
+      status = true
     }
-    else if (leftItem > rightItem) return false
-    else if (i !== Math.max(left.length, right.length) - 1 && right[i + 1] === undefined) return true
-    else if (i !== Math.max(left.length, right.length) - 1 && left[i + 1] === undefined) return false
-    // else if (right[i + 1] === undefined) return true
   }
-  return true;
+  return status
+}
+
+export const compare = (left: RecursiveArray, right: RecursiveArray) => {
+    for (let i = 0; i < Math.max(left.length, right.length); i++) {
+      const leftItem = left[i], rightItem = right[i]
+      if (typeof leftItem === "object" && typeof rightItem === "object") {
+        const onlyContainsInts = leftItem.every(item => typeof item === "number")
+          && rightItem.every(item => typeof item === "number")
+        const compareResult = onlyContainsInts ? naiveCompare(leftItem, rightItem) : compare(leftItem, rightItem)
+        if (compareResult === false) return false
+        if (compareResult === undefined) {
+          if (leftItem.length < rightItem.length) return false
+        }
+      }
+      else if (typeof leftItem === "object") {
+        const onlyContainsInts = leftItem.every(item => typeof item === "number")
+        const compareResult = onlyContainsInts ? naiveCompare(leftItem, [rightItem]) : compare(leftItem, [rightItem])
+        if (compareResult === false) return false
+        if (compareResult === undefined) {
+          if (leftItem.length < 1) return false;
+        }
+      }
+      else if (typeof rightItem === "object") {
+        const onlyContainsInts = rightItem.every(item => typeof item === "number")
+        const compareResult = onlyContainsInts ? naiveCompare([leftItem], rightItem) : compare([leftItem], rightItem)
+        if (compareResult === false) return false
+        if (compareResult === undefined) {
+          if (1 < rightItem.length) {
+            return false
+          }
+        }
+      }
+      else if (leftItem > rightItem) return false
+    }
+    return true
 }
 
 const countIndices = (data) => {
