@@ -1,105 +1,54 @@
-import { rawTest } from "./rawTest"
-import { rawInput } from "./rawInput"
-
-const mapFn = (line) => ({
+export const mapFn = (line) => ({
   left: eval(line.split("\n")[0]),
   right: eval(line.split("\n")[1]),
 })
 
-const filterFn = (line) => line !== ""
+export const filterFn = (line) => line !== ""
 
-const testData = rawTest.split("\n\n").filter(filterFn).map(mapFn)
-const inputData = rawInput.split("\n\n").filter(filterFn).map(mapFn)
 
-type RecursiveArray = Array<RecursiveArray | number>
-
-const naiveCompare = (left: RecursiveArray, right: RecursiveArray): boolean | undefined => {
-  let status
-  for (let i = 0; i < Math.max(left.length, right.length); i++) {
-    const leftItem = left[i], rightItem = right[i]
-    if (leftItem === undefined || rightItem === undefined) {
-      if (rightItem === undefined && status === undefined) return false
-      return status || true
-    }
-    if (typeof leftItem === "object" && typeof rightItem === "object") {
-      if (leftItem.length === 0 && rightItem.length > 0) return true
-      const compareResult = naiveCompare(leftItem, rightItem)
-      if (compareResult === false) return false
-      if (compareResult === undefined) {
-        if (leftItem.length < rightItem.length) return false
-      } else {
-        status = compareResult
-      }
-    }
-    else if (typeof leftItem === "object") {
-      const compareResult = naiveCompare(leftItem, [rightItem])
-      if (compareResult === false) return false
-      if (compareResult === undefined) {
-        if (leftItem.length < 1) return false;
-      } else {
-        status = compareResult
-      }
-    }
-    else if (typeof rightItem === "object") {
-      const compareResult = naiveCompare([leftItem], rightItem)
-      if (compareResult === false) return false
-      if (compareResult === undefined) {
-        if (1 < rightItem.length) {
-          return false
-        }
-      } else {
-        status = compareResult
-      }
-    }
-    else if (leftItem > rightItem) return false
-    else if (leftItem < rightItem) {
-      status = true
-    }
-  }
-  return status
-}
+export type RecursiveArray = Array<RecursiveArray | number>
 
 export const compare = (left: RecursiveArray, right: RecursiveArray) => {
   let status
   for (let i = 0; i < Math.max(left.length, right.length); i++) {
     const leftItem = left[i], rightItem = right[i]
     if (leftItem === undefined || rightItem === undefined) {
-      if (rightItem === undefined && status === undefined) return false
-      return status || true
+      return !(rightItem === undefined && status === undefined);
     }
     if (typeof leftItem === "object" && typeof rightItem === "object") {
-      const compareResult = naiveCompare(leftItem, rightItem)
+      const compareResult = compare(leftItem, rightItem)
       if (compareResult === false) return false
       if (compareResult === undefined) {
         if (leftItem.length > rightItem.length) return false
       } else {
-        status = compareResult
+        return true
       }
     }
     else if (typeof leftItem === "object") {
-      const compareResult = naiveCompare(leftItem, [rightItem])
+      const compareResult = compare(leftItem, [rightItem])
       if (compareResult === false) return false
       if (compareResult === undefined) {
         if (leftItem.length < 1) return false;
       } else {
-        status = compareResult
+        return true
       }
     }
     else if (typeof rightItem === "object") {
-      const compareResult = naiveCompare([leftItem], rightItem)
+      const compareResult = compare([leftItem], rightItem)
       if (compareResult === false) return false
       if (compareResult === undefined) {
         if (1 < rightItem.length) {
           return false
         }
       } else {
-        status = compareResult
+        return true
       }
     }
-    else if (leftItem > rightItem) return false
-    else if (leftItem < rightItem) status = true
+    if (leftItem > rightItem) return false
+    if (leftItem < rightItem) return true
   }
-    return true
+  const same = left.length === right.length
+  return same ? undefined : true
 }
 
 const countIndices = (data) => {
@@ -111,5 +60,23 @@ const countIndices = (data) => {
   return counter
 }
 
-export const part1 = () => countIndices(testData)
-export const part2 = () => countIndices(inputData)
+const flatMapFn = (item) => item.length === 0 ? -1 : item
+
+export const sort = (packets: RecursiveArray[]): RecursiveArray[] =>
+  packets.sort((a, b) => compare(a, b) ? -1 : 1)
+
+const findDividers = (data: RecursiveArray[]) => {
+  const firstDivider = [[2]]
+  const firstDividerIndex = data.findIndex(item => `${item}` === `${firstDivider}`) + 1
+  const secondDivider = [[6]]
+  const secondDividerIndex = data.findIndex(item => `${item}` === `${secondDivider}`) + 1
+  console.log(firstDividerIndex, secondDividerIndex);
+  return firstDividerIndex * secondDividerIndex
+}
+
+export const part1 = (data) => countIndices(data)
+export const part2 = (data) => {
+  const sorted = sort(data.concat([[[2]], [[6]]],))
+  console.log(sorted);
+  return findDividers(sorted)
+}

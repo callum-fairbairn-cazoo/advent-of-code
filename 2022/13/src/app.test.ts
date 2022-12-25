@@ -1,4 +1,12 @@
-import { compare, part1, part2 } from "./app";
+import { compare, filterFn, mapFn, part1, part2, sort } from "./app";
+import { rawTest } from "./rawTest";
+import { rawInput } from "./rawInput";
+
+const testData = rawTest.split("\n\n").filter(filterFn).map(mapFn)
+const inputData = rawInput.split("\n\n").filter(filterFn).map(mapFn)
+
+const testData2 = rawTest.split("\n").filter(filterFn).map((item) => eval(item))
+const inputData2 = rawInput.split("\n").filter(filterFn).map((item) => eval(item))
 
 describe("compare", () => {
   describe("for just ints", () => {
@@ -139,15 +147,60 @@ describe("compare", () => {
     // [[[]]] x [[1]] -> [[]] x [1] -> [] x 1
     expect(compare(left, right)).toEqual(true)
   })
+
+  it("test case 15", () => {
+    const left = [[7,[1,[7,8,5,10],5,[9,0,10,9,4]],[9],6],[[[9]],5,2],[],[10,[0],[[1,4],[2,6],[9,4,10]]],[[[],2,[3,7,1],7],7,9]]
+    const right = [[[9,[8,7,7,4],[10,4,9],[1,8,6,8],6],10,[]],[9,[[],[6,7,6]],[]]]
+    expect(compare(left, right)).toEqual(true)
+  })
+
+  it("test case 16", () => {
+    const left = [[[[],8],1]]
+    const right = [[[[]]],[[[0,6,8]],[],1,[[4,5,6,7]]],[[5,[10,10,8],[5,4,2,10,5],[4,10,7,0]],7,5,[6,[4,6,8,7,8],[4,8,6]]],[0,5],[9]]
+    // [[[],8],1] x [[[]]]
+    // [[],8] x [[]]
+    expect(compare(left, right)).toEqual(false)
+  })
+})
+
+describe("sort", () => {
+  it.each([
+    [
+      [[2], [1]],
+      [[1], [2]],
+    ],
+    [
+      [[], [1]],
+      [[], [1]],
+    ],
+    [
+      [[[1]], [1]],
+      [[1], [[1]]],
+    ],
+    [
+      [[1, [2, 3]], [1, [1, 3]]],
+      [[1, [1, 3]], [1, [2, 3]]],
+    ],
+  ])("sort(%o) => %o", (unsortded, sorted) => {
+    expect(sort(unsortded)).toEqual(sorted)
+  })
 })
 
 describe('execute', () => {
-  it('part1', () => {
-    console.log(part1());
+  it('part1 testData', () => {
+    console.log(part1(testData));
   });
 
-  it('part2', () => {
-    console.log(part2());
+  it('part1 inputData', () => {
+    console.log(part1(inputData));
+  });
+
+  it('part2 test data', () => {
+    console.log(part2(testData2));
+  });
+
+  it('part2 input data', () => {
+    console.log(part2(inputData2));
   });
 });
 
